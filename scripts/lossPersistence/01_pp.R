@@ -5,8 +5,8 @@ packages_list<-list("magrittr", "terra", "raster", "jsonlite")
 invisible(   lapply(packages_list, library, character.only = TRUE)   )
 
 # Organizar directorios
-args <- commandArgs(trailingOnly=TRUE)
-outputFolder <- args[1]
+#args <- commandArgs(trailingOnly=TRUE)
+#outputFolder <- args[1]
 
 # Cargar archivos de entrada
 input <- rjson::fromJSON(file=file.path(outputFolder, "input.json"))
