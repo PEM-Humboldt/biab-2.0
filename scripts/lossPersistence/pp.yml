@@ -11,7 +11,7 @@ inputs:
     label: dir_collection
     description: dir_collection
     type: text
-    example: '/output/0_inputs/Colecciones/Colombia_pp_collection'
+    example: '/scripts/lossPersistence/input/Colombia_pp_collection'
   epsg:
     label: epsg
     description: epsg
@@ -63,4 +63,8 @@ outputs:
     label: dir_data_areas
     description: dir_data_areas
     type: text/csv
+  table_pp:
+    label: table_pp
+    description: table_pp
+    type: text
 

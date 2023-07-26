@@ -8,25 +8,18 @@ packagesList<-list("magrittr", "terra", "raster")
 lapply(packagesList, library, character.only = TRUE)
 
 # Definir output
-#  outputFolder<- {x<- this.path::this.path(); paste0(gsub("/scripts.*", "/output", x), gsub("^.*/scripts", "", x)  ) }  %>% list.files(full.names = T) %>% {.[which.max(sapply(., function(info) file.info(info)$mtime))]}
-Sys.setenv(outputFolder = "/path/to/output/folder")
+# outputFolder<- {x<- this.path::this.path(); paste0(gsub("/scripts.*", "/output", x), gsub("^.*/scripts", "", x)  ) }  %>% list.files(full.names = T) %>% {.[which.max(sapply(., function(info) file.info(info)$mtime))]}
+# Sys.setenv(outputFolder = "/path/to/output/folder")
 
 # Definir input
 input <- rjson::fromJSON(file=file.path(outputFolder, "input.json")) # Cargar input
+input<- lapply(input, function(x) if( grepl("/", x) ){
+  sub("/output/.*", "/output", outputFolder) %>% dirname() %>%  file.path(x) %>% {gsub("//+", "/", .)}  }else{x} ) # Ajuste input 1
 
-input<- lapply(input, function(x) if( grepl("/output/", x) ){
-  sub(".*/output/", "/output/", x) %>%  {gsub("/output.*", ., outputFolder)}}else{x} ) # Ajuste input 1
 
-input <- lapply(input, function(x) {
-  if(tools::file_ext(x) %in% 'json'){
-    pattern<-  "/\\{\\{(.+?)\\}\\}/"
-    element <-  stringr::str_extract(x, pattern) %>% {gsub("[\\{\\}/]", "", .)}
-     folder_json<- gsub(pattern, "/", x) %>% dirname() %>% list.files(full.names = T) %>% {.[which.max(sapply(., function(info) file.info(info)$mtime))]}
-    object<- rjson::fromJSON(file=file.path(folder_json, "output.json"))[[element]]
-  } else {x}    }    ) # Ajuste input 2
 
-input<- lapply(input, function(x) if( grepl("/output/", x) ){
-  sub(".*/output/", "/output/", x) %>%  {gsub("/output.*", ., outputFolder)}}else{x} ) # Ajuste input 1
+
+
 
 
 # Correr codigo
@@ -238,6 +231,12 @@ dir_data_areas<- file.path(outputFolder, "data_areas.csv")
 write.csv(data_areas2, dir_data_areas)
 
 
+
+# Tabla de areas json
+table_pp<- jsonlite::toJSON(data_areas2)
+
+
+
 # Exportar imagenes de los raster
 dir_png<- file.path(outputFolder, "dir_png")
 unlink(dir_png, recursive = TRUE); dir.create(dir_png); setwd(dir_png)
@@ -271,26 +270,9 @@ saveraster<- lapply( seq(nrow(data_areas)), function(i) { print(i)
 } )
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Exportar output final
 output<- list( area_stack= dir_area_4326, dir_stack= dir_stack, dir_png=dir_png, dir_info_layer= dir_info_layer,
-               dir_data_layer=dir_data_layer, dir_data_areas= dir_data_areas)
+               dir_data_layer=dir_data_layer, dir_data_areas= dir_data_areas, table_pp=table_pp)
   
 setwd(outputFolder)
 jsonlite::write_json(output, "output.json", auto_unbox = TRUE, pretty = TRUE)
