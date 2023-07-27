@@ -21,7 +21,7 @@
             "period_layer": ["2000-2005", "2000-2005", "2000-2005"],
             "col": ["#c65453", "#92ab58", "#c5b599"],
             "value": [0, 1, 2],
-            "classes": ["Perdida", "Persistencia", "No Bosque"]
+            "key": ["perdida", "persistencia", "no_bosque"]
           }
         }
       },
@@ -41,7 +41,7 @@
             "period_layer": ["2006-2010", "2006-2010", "2006-2010"],
             "col": ["#c65453", "#92ab58", "#c5b599"],
             "value": [0, 1, 2],
-            "classes": ["Perdida", "Persistencia", "No Bosque"]
+            "key": ["perdida", "persistencia", "no_bosque"]
           }
         }
       },
@@ -61,7 +61,7 @@
             "period_layer": ["2011-2015", "2011-2015", "2011-2015"],
             "col": ["#c65453", "#92ab58", "#c5b599"],
             "value": [0, 1, 2],
-            "classes": ["Perdida", "Persistencia", "No Bosque"]
+            "key": ["perdida", "persistencia", "no_bosque"]
           }
         }
       },
@@ -81,7 +81,7 @@
             "period_layer": ["2016-2021", "2016-2021", "2016-2021"],
             "col": ["#c65453", "#92ab58", "#c5b599"],
             "value": [0, 1, 2],
-            "classes": ["Perdida", "Persistencia", "No Bosque"]
+            "key": ["perdida", "persistencia", "no_bosque"]
           }
         }
       },
@@ -103,7 +103,7 @@
             "period_layer": ["2000-2005", "2000-2005", "2000-2005"],
             "col": ["#c65453", "#92ab58", "#c5b599"],
             "value": [0, 1, 2],
-            "classes": ["Perdida", "Persistencia", "No Bosque"]
+            "key": ["perdida", "persistencia", "no_bosque"]
           }
         }
       },
@@ -123,7 +123,7 @@
             "period_layer": ["2006-2010", "2006-2010", "2006-2010"],
             "col": ["#c65453", "#92ab58", "#c5b599"],
             "value": [0, 1, 2],
-            "classes": ["Perdida", "Persistencia", "No Bosque"]
+            "key": ["perdida", "persistencia", "no_bosque"]
           }
         }
       },
@@ -143,7 +143,7 @@
             "period_layer": ["2011-2015", "2011-2015", "2011-2015"],
             "col": ["#c65453", "#92ab58", "#c5b599"],
             "value": [0, 1, 2],
-            "classes": ["Perdida", "Persistencia", "No Bosque"]
+            "key": ["perdida", "persistencia", "no_bosque"]
           }
         }
       },
@@ -163,7 +163,7 @@
             "period_layer": ["2016-2021", "2016-2021", "2016-2021"],
             "col": ["#c65453", "#92ab58", "#c5b599"],
             "value": [0, 1, 2],
-            "classes": ["Perdida", "Persistencia", "No Bosque"]
+            "key": ["perdida", "persistencia", "no_bosque"]
           }
         }
       },
