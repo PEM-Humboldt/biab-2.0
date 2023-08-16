@@ -224,7 +224,7 @@ freq_layers<- terra::freq(layers) %>% list(name_layers) %>% plyr::join_all() %>%
 data_areas<- list( dplyr::filter(freq_layers, !layer %in% "area") , data_layers) %>% plyr::join_all() 
 data_areas2<- data_areas %>% 
   dplyr::group_by(period_layer) %>%  dplyr::mutate(percentage= area/ sum(area)) %>% 
-  dplyr::select(period=period_layer, key, layer, value, area, percentage)
+  dplyr::select(period_layer, classes, layer, value, area, percentage)
 
 # Tabla de areas
 dir_data_areas<- file.path(outputFolder, "data_areas.csv")
@@ -254,7 +254,7 @@ saveraster<- lapply( seq(nrow(data_areas)), function(i) { print(i)
   r<- raster(raster_val)
   
   setwd(dir_png)
-  png( paste0( paste(c("forestLP", x$period_layer, x$key), collapse = "-") ,  ".png"),
+  png( paste0( paste(c("forestLP", x$period_layer, x$classes), collapse = "-") ,  ".png"),
        width = 1000, height = 1000, units = "px", res=300 )
   
   plot.new()
