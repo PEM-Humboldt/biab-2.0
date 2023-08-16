@@ -1,6 +1,6 @@
 # Instalar librerias necesarias
 packagesPrev<- installed.packages()[,"Package"]
-packagesNeed<- list("magrittr", "terra", "raster", "sf", "fasterize", "pbapply")
+packagesNeed<- list("magrittr", "terra", "raster", "sf", "fasterize", "pbapply", "gdalUtilities")
 lapply(packagesNeed, function(x) {   if ( ! x %in% packagesPrev ) { install.packages(x, force=T)}    })
 
 # Cargar librerias
@@ -8,49 +8,40 @@ packagesList<-list("magrittr", "terra", "raster")
 lapply(packagesList, library, character.only = TRUE)
 
 # Definir output
+Sys.setenv(outputFolder = "/path/to/output/folder")
 # outputFolder<- {x<- this.path::this.path(); paste0(gsub("/scripts.*", "/output", x), gsub("^.*/scripts", "", x)  ) }  %>% list.files(full.names = T) %>% {.[which.max(sapply(., function(info) file.info(info)$mtime))]}
-# Sys.setenv(outputFolder = "/path/to/output/folder")
 
 # Definir input
 input <- rjson::fromJSON(file=file.path(outputFolder, "input.json")) # Cargar input
 input<- lapply(input, function(x) if( grepl("/", x) ){
   sub("/output/.*", "/output", outputFolder) %>% dirname() %>%  file.path(x) %>% {gsub("//+", "/", .)}  }else{x} ) # Ajuste input 1
 
-
-
-
-
-
-
 # Correr codigo
 # Definir area de estudio
 ext_WKT_area<- tools::file_ext(input$WKT_area)
 dir_wkt<- if(ext_WKT_area %in% "txt"){ readLines(input$WKT_area) }else{ input$WKT_area }
 crs_polygon<- terra::crs( paste0("+init=epsg:", input$epsg) ) %>% as.character()
-vector_polygon<- terra::vect(dir_wkt, crs=  crs_polygon ) 
+vector_polygon<- terra::vect(dir_wkt, crs=  crs_polygon ) %>% sf::st_as_sf()
   
 # Ajustar resolucion
 resolution_crs<- raster::raster(raster::extent(seq(4)),crs= paste0("+init=epsg:", 3395), res= input$resolution) %>% 
   raster::projectRaster( crs = crs_polygon) %>% raster::res()
-
-box_polygon<-  sf::st_bbox(vector_polygon) %>% sf::st_as_sfc() %>% sf::st_buffer(sqrt(prod(resolution_crs))) %>% sf::st_bbox()
-
+box_polygon<-  sf::st_bbox(vector_polygon) %>% sf::st_as_sfc() %>% sf::st_bbox()
 
 # crear raster base
-rasterbase<- raster::raster( raster::extent(box_polygon),crs= crs_polygon, res= resolution_crs) %>% terra::rast()
-study_area<- terra::rasterize(vector_polygon, rasterbase)
+rasterbase<- raster::raster( raster::extent(box_polygon),crs= crs_polygon, res= resolution_crs)
+
+# cargar area de estudio
+tf_sp<- tempfile(fileext = '.shp'); sf::st_write(vector_polygon, tf_sp); tf<- tempfile(fileext = '.tif')
+t_file<- terra::writeStart(rasterbase, filename = tf,  overwrite=T); terra::writeStop(t_file);
+gdalUtilities::gdal_rasterize(at=T, src_datasource= tf_sp, tf, burn = 1 )
+study_area<- terra::rast(t_file)
+
 box_study_area<- terra::ext(study_area) %>% sf::st_bbox()
 dim_study_area<- dim(study_area)
 
-
-
-
-
-
-
 # Cargar coleccion
   if( startsWith(input$collection_path, "http://") ){ # Cuando proviene de una coleccion en linea
-    
     RSTACQuery<- rstac::stac(input$collection_path)
     box_4326 <-  sf::st_as_sfc(box_polygon) %>% sf::st_transform(4326) %>% sf::st_bbox()
     STACItemCollection <- rstac::stac_search(q= RSTACQuery, collections = "chelsa-clim" , bbox = box_4326) %>% rstac::get_request()
@@ -58,12 +49,10 @@ dim_study_area<- dim(study_area)
     image_collection <- gdalcubes::stac_image_collection(STACItemCollection$features, asset_names = assets )
 
   } else { # Cuando proviene de una coleccion local
-    
     layers_collection <- list.files(input$collection_path, "\\.tif$", recursive = TRUE, full.names = TRUE)
     json_colleciton_file <- list.files(input$collection_path, "\\.json$", recursive = TRUE, full.names = TRUE)
     STACItemCollection <-   rjson::fromJSON(file= json_colleciton_file)
     image_collection <- gdalcubes::create_image_collection(files= layers_collection, format= json_colleciton_file)
-    
   }
   
 # Cargar assests metadata
@@ -99,7 +88,7 @@ t1<- (if(type_period$type == "Y"){ lubridate::ceiling_date(as.Date(t1),  lubrida
 cube_collection<- gdalcubes::cube_view(srs = crs_polygon,  extent = list(t0 = t0, t1 = t1,
                                                                            left = box_study_area[1], right = box_study_area[3],
                                                                            top = box_study_area[4], bottom = box_study_area[2]),
-                                         nx = dim_study_area[2], ny = dim_study_area[1], dt = "P1Y",aggregation = "near", resampling = "first",
+                                         nx = dim_study_area[1], ny = dim_study_area[2], dt = "P1Y",aggregation = "near", resampling = "first",
                                          keep.asp= F)
 
 # Crear cubo
@@ -116,23 +105,27 @@ cube_times
 nc_times<- if(nrow(cube_times)<2){"X0"}else{ paste0("X", ncdf4::ncvar_get(nc, "time_bnds")[1,]) }
 time_collection<- as.data.frame(gdalcubes::dimension_bounds(cube)[["t"]]) %>% dplyr::mutate(time_id= nc_times, dim3=seq(nrow(.)))
 
+
 # Organizar cubo como raster
 terra_mask<- pbapply::pblapply(vars[5:length(vars)], function(x){ print(x)
   
   # Dimensiones de la capa
-  dims_var <- ncdf4::ncvar_get(nc, x)
-  
+  dims_var <- ncdf4::ncvar_get(nc= nc, varid= x, collapse_degen = F)
+
   # Validar si la capa esta vacia
   key<-  as.data.frame(which(!is.na(dims_var),  arr.ind = TRUE))
 
-  if(nrow(key)>0){ 
+  if(nrow(key)>0){
     
     # Cargar capa raster
     key2<- {if(nrow(cube_times)<2){ dplyr::mutate(key, time_id= "X0") }else{ key }} %>% {list(., time_collection)} %>% plyr::join_all()
-    brick  <- raster::brick(fn, var= x) %>% terra::rast() %>% terra::resample(study_area, method= "near") %>% terra::mask(study_area)
+    
+    stack_var<-  terra::rast(dims_var) %>% setNames(nc_times) 
+    terra::crs(stack_var)<- terra::crs(study_area)
+    terra::ext(stack_var)<- terra::ext(study_area)
     
     times<- unique(key2$time_id) 
-    layer <- brick[[ times ]];
+    layer <-   stack_var  [[ times ]] %>% terra::mask(study_area)
     
     # Organizar metadatos de la capa
     metadata_band<- assets_metadata[[x]]
@@ -147,9 +140,6 @@ terra_mask<- pbapply::pblapply(vars[5:length(vars)], function(x){ print(x)
     which_values<- unlist(sapply(metadata_assest, function(x) "value" %in% names(x)))
     metadata_assest2<- metadata_assest[which(!which_values)]
     suppressMessages({metadata_assest2<- dplyr::bind_cols(metadata_assest2) %>% dplyr::mutate(layer= x)})
-    
-   
-    
     
     # Organizar informacion de la capa
     info_layer<- dplyr::distinct(key2[, c("start", "end")]) %>% dplyr::distinct() %>% 
@@ -169,9 +159,14 @@ terra_mask<- pbapply::pblapply(vars[5:length(vars)], function(x){ print(x)
     # Asignar "value" a los datos
     if(sum(which_values)>0){
       metadata_values<- metadata_assest[which(which_values)][[1]]; class_names<- names(metadata_values) %>% {.[!. %in% "value"]}
-      data_layer2<- list(data_layer, metadata_values ) %>% plyr::join_all()
+      data_layer2<- list(metadata_values, data_layer) %>% plyr::join_all() %>% 
+        dplyr::mutate_all(~ ifelse(is.na(.), unique(.[!is.na(.)]), .))
       if(length(class_names)>0){data_layer<- dplyr::relocate(data_layer2, class_names, .after = "value")}
     }
+    
+    
+    
+    
     
     list(layer=layer, info_layer= info_layer, data_layer= data_layer)
     
@@ -220,17 +215,21 @@ freq_layers<- terra::freq(layers) %>% list(name_layers) %>% plyr::join_all() %>%
   dplyr::select(- c("layer", "count")) %>% dplyr::rename(layer= layer_id)
 
 
+
 # Asignar atributos a layer
-data_areas<- list( dplyr::filter(freq_layers, !layer %in% "area") , data_layers) %>% plyr::join_all() 
+data_areas<- list(data_layers, dplyr::filter(freq_layers, !layer %in% "area")) %>% plyr::join_all() %>% 
+  dplyr::mutate(area= ifelse(is.na(area), 0, area))
+
 data_areas2<- data_areas %>% 
   dplyr::group_by(period_layer) %>%  dplyr::mutate(percentage= area/ sum(area)) %>% 
-  dplyr::select(period_layer, classes, layer, value, area, percentage)
+  dplyr::mutate(period= period_layer, key= tolower(classes)) %>% 
+  as.data.frame() %>% dplyr::select(c(period, classes, layer, value, area, percentage, col, key)) %>% 
+  dplyr::relocate(c("layer", "value", "col", "key", "classes", "period", "area", "percentage"),.before = 1)
+
 
 # Tabla de areas
 dir_data_areas<- file.path(outputFolder, "data_areas.csv")
 write.csv(data_areas2, dir_data_areas)
-
-
 
 # Tabla de areas json
 table_pp<- jsonlite::toJSON(data_areas2)
