@@ -1,0 +1,292 @@
+{
+    "nodes": [
+      {
+        "id": "0",
+        "type": "io",
+        "position": {
+          "x": 455.891125898346,
+          "y": 360.56062118529445
+        },
+        "data": {
+          "descriptionFile": "Analysis_Area>Analysis_Area.yml"
+        }
+      },
+      {
+        "id": "1",
+        "type": "io",
+        "position": {
+          "x": 416.2301164722427,
+          "y": 185.0482529163595
+        },
+        "data": {
+          "descriptionFile": "Analysis_Window>Analysis_Window.yml"
+        }
+      },
+      {
+        "id": "2",
+        "type": "io",
+        "position": {
+          "x": -57.230116472242685,
+          "y": 279.5397670555146
+        },
+        "data": {
+          "descriptionFile": "Reference Cartography>Reference_Cartography.yml"
+        }
+      },
+      {
+        "id": "3",
+        "type": "constant",
+        "position": {
+          "x": 74.05019412040451,
+          "y": 190.7783693886022
+        },
+        "dragHandle": ".dragHandle",
+        "data": {
+          "type": "text",
+          "value": "Amazonas.gpkg"
+        }
+      },
+      {
+        "id": "4",
+        "type": "constant",
+        "position": {
+          "x": 83.05019412040451,
+          "y": 361.61081530569885
+        },
+        "dragHandle": ".dragHandle",
+        "data": {
+          "type": "text",
+          "value": "Amazonas.gpkg"
+        }
+      },
+      {
+        "id": "5",
+        "type": "io",
+        "position": {
+          "x": 776.5,
+          "y": 359
+        },
+        "data": {
+          "descriptionFile": "Covariate_Selection>Covariate_Selection.yml"
+        }
+      },
+      {
+        "id": "6",
+        "type": "constant",
+        "position": {
+          "x": 479.5,
+          "y": 286
+        },
+        "dragHandle": ".dragHandle",
+        "data": {
+          "type": "text",
+          "value": "Colombian_layers"
+        }
+      },
+      {
+        "id": "8",
+        "type": "io",
+        "position": {
+          "x": 66.5,
+          "y": 517
+        },
+        "data": {
+          "descriptionFile": "Model_Optimization>Model_Optimization.yml"
+        }
+      },
+      {
+        "id": "9",
+        "type": "io",
+        "position": {
+          "x": 569.5,
+          "y": 511
+        },
+        "data": {
+          "descriptionFile": "PreMatching_Statistics>PreMatching_Statistics.yml"
+        }
+      },
+      {
+        "id": "10",
+        "type": "io",
+        "position": {
+          "x": 573.5899611759191,
+          "y": 630
+        },
+        "data": {
+          "descriptionFile": "PosMatching_Statistics>PosMatching_Statistics.yml"
+        }
+      },
+      {
+        "id": "11",
+        "type": "constant",
+        "position": {
+          "x": 228.5,
+          "y": 658.5397670555146
+        },
+        "dragHandle": ".dragHandle",
+        "data": {
+          "type": "text",
+          "value": "nearest"
+        }
+      },
+      {
+        "id": "12",
+        "type": "output",
+        "position": {
+          "x": 1027.762617826292,
+          "y": 714.0613169990821
+        },
+        "data": {
+          "label": "Output"
+        }
+      },
+      {
+        "id": "13",
+        "type": "constant",
+        "position": {
+          "x": -320.4457015415552,
+          "y": 256.31178848638996
+        },
+        "dragHandle": ".dragHandle",
+        "data": {
+          "type": "text",
+          "value": "WGS84 /World mercator (EPSG::3395)"
+        }
+      },
+      {
+        "id": "14",
+        "type": "constant",
+        "position": {
+          "x": -317.71558506931245,
+          "y": 322.7446226442956
+        },
+        "dragHandle": ".dragHandle",
+        "data": {
+          "type": "int",
+          "value": 1000
+        }
+      }
+    ],
+    "edges": [
+      {
+        "source": "2",
+        "sourceHandle": "raster_base",
+        "target": "1",
+        "targetHandle": "raster_base",
+        "id": "reactflow__edge-2raster_base-1raster_base"
+      },
+      {
+        "source": "2",
+        "sourceHandle": "raster_base",
+        "target": "0",
+        "targetHandle": "raster_base",
+        "id": "reactflow__edge-2raster_base-0raster_base"
+      },
+      {
+        "source": "3",
+        "sourceHandle": null,
+        "target": "1",
+        "targetHandle": "layer",
+        "id": "reactflow__edge-3-1layer"
+      },
+      {
+        "source": "4",
+        "sourceHandle": null,
+        "target": "0",
+        "targetHandle": "layer",
+        "id": "reactflow__edge-4-0layer"
+      },
+      {
+        "source": "0",
+        "sourceHandle": "area_raster",
+        "target": "5",
+        "targetHandle": "Area_raster",
+        "id": "reactflow__edge-0area_raster-5Area_raster"
+      },
+      {
+        "source": "1",
+        "sourceHandle": "window_raster",
+        "target": "5",
+        "targetHandle": "Window_raster",
+        "id": "reactflow__edge-1window_raster-5Window_raster"
+      },
+      {
+        "source": "6",
+        "sourceHandle": null,
+        "target": "5",
+        "targetHandle": "stack_collection",
+        "id": "reactflow__edge-6-5stack_collection"
+      },
+      {
+        "source": "5",
+        "sourceHandle": "pre_match_table",
+        "target": "8",
+        "targetHandle": "table_covars",
+        "id": "reactflow__edge-5pre_match_table-8table_covars"
+      },
+      {
+        "source": "11",
+        "sourceHandle": null,
+        "target": "10",
+        "targetHandle": "matching_method",
+        "id": "reactflow__edge-11-10matching_method"
+      },
+      {
+        "source": "8",
+        "sourceHandle": "Selected_variables",
+        "target": "9",
+        "targetHandle": "covars",
+        "id": "reactflow__edge-8Selected_variables-9covars"
+      },
+      {
+        "source": "8",
+        "sourceHandle": "Selected_variables",
+        "target": "10",
+        "targetHandle": "covars",
+        "id": "reactflow__edge-8Selected_variables-10covars"
+      },
+      {
+        "source": "5",
+        "sourceHandle": "pre_match_table",
+        "target": "9",
+        "targetHandle": "pre_match_table",
+        "id": "reactflow__edge-5pre_match_table-9pre_match_table"
+      },
+      {
+        "source": "5",
+        "sourceHandle": "pre_match_table",
+        "target": "10",
+        "targetHandle": "pre_match_table",
+        "id": "reactflow__edge-5pre_match_table-10pre_match_table"
+      },
+      {
+        "source": "10",
+        "sourceHandle": "pos_match_table",
+        "target": "12",
+        "targetHandle": null,
+        "id": "reactflow__edge-10pos_match_table-12"
+      },
+      {
+        "source": "13",
+        "sourceHandle": null,
+        "target": "2",
+        "targetHandle": "CRS",
+        "id": "reactflow__edge-13-2CRS"
+      },
+      {
+        "source": "14",
+        "sourceHandle": null,
+        "target": "2",
+        "targetHandle": "res",
+        "id": "reactflow__edge-14-2res"
+      }
+    ],
+    "inputs": {},
+    "outputs": {
+      "PosMatching_Statistics>PosMatching_Statistics.yml@10|pos_match_table": {
+        "description": "Text string referring to file path of the generated WKT file (.txt) that represents the boundaries of the study area. The WKT (Well-Known Text) file is a text-based format that describes the geometry of the boundaries of the study area. The structure of the WKT file includes a geometry type label (MULTIPOLYGON) associated with the coordinate values of the vertices that define the boundaries of the study area mask.",
+        "label": "Pos-Matching Table",
+        "type": "text"
+      }
+    }
+  }

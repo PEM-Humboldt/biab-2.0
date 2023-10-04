@@ -1,0 +1,30 @@
+script: Model_Optimization.R
+name: Model Optimization
+description: This script converts the geometry of the study area into a well-known text (WKT) representation.
+author: 
+ - name: Maria Alejandra Molina Berbeo (mmolina@humboldt.org.co)
+ - name: Victor Julio Rincon (vrincon@humboldt.org.co)
+external_link: https://github.com/GEO-BON/biab-2.0
+inputs:
+  table_covars:
+    label: Table of covariates
+    description: Text string representing the file path to the spatial file containing the spatial boundaries pertaining to the study area. Accepted file types include shapefile (.shp), raster (.tif/GeoTIFF) or  GeoPackage (.gpkg). This path specifies the complete path location of the file within the file system and is utilized for identifying and accessing the spatial boundaries contained within the file.
+    type: text
+    example: "/scripts/00_studyarea_to_WKT/input/Arauca.gpkg"
+outputs:
+  Selected_variables:
+    label: "Adjusted variables"
+    description: Text string referring to file path of the generated WKT file (.txt) that represents the boundaries of the study area. The WKT (Well-Known Text) file is a text-based format that describes the geometry of the boundaries of the study area. The structure of the WKT file includes a geometry type label (MULTIPOLYGON) associated with the coordinate values of the vertices that define the boundaries of the study area mask.
+    type: text
+  Correlation_Dendrogram:
+    label: Correlation Dendrogram
+    description: Text string referring to file path of the generated WKT file (.txt) that represents the boundaries of the study area. The WKT (Well-Known Text) file is a text-based format that describes the geometry of the boundaries of the study area. The structure of the WKT file includes a geometry type label (MULTIPOLYGON) associated with the coordinate values of the vertices that define the boundaries of the study area mask.
+    type: text
+  Correlation_Matrix:
+    label: Correlation Matrix
+    description: Text string referring to file path of the generated WKT file (.txt) that represents the boundaries of the study area. The WKT (Well-Known Text) file is a text-based format that describes the geometry of the boundaries of the study area. The structure of the WKT file includes a geometry type label (MULTIPOLYGON) associated with the coordinate values of the vertices that define the boundaries of the study area mask.
+    type: text
+  test_AIC:
+    label: AIC - Model fitting
+    description: Text string referring to file path of the generated WKT file (.txt) that represents the boundaries of the study area. The WKT (Well-Known Text) file is a text-based format that describes the geometry of the boundaries of the study area. The structure of the WKT file includes a geometry type label (MULTIPOLYGON) associated with the coordinate values of the vertices that define the boundaries of the study area mask.
+    type: text
