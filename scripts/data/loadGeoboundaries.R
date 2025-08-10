@@ -12,7 +12,7 @@ adm2_name <- input$adm2_name   # Level 2 name (can be NULL)
 
 # Download and load GADM data by country and level using geodata
 download_gadm_sf <- function(iso3, level) {
-  gadm <- geodata::gadm(country = iso3, level = level, path = outputFolder,resolution=2 )
+  gadm <- geodata::gadm(country = iso3, level = level, path = tempdir(),resolution=2 )
   sf_obj <- st_as_sf(gadm)
   if (st_crs(sf_obj)$epsg != 4326) {
     sf_obj <- st_transform(sf_obj, crs = 4326)
