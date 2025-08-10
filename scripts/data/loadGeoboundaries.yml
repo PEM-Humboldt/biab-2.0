@@ -1,0 +1,60 @@
+script: loadGeoboundaries.R
+name: load Geoboundaries
+description: This R script downloads, filters, and plots administrative boundaries (levels 0 to 2) for a given country using GADM data via the geodata package. It allows the user to specify administrative unit names (e.g., department or municipality) and ensures all spatial data is transformed to WGS84 (longitude/latitude).
+license: CC-BY
+author:
+  - name: Luis Fernando Urbina
+    email: lurbina@humboldt.org.co 
+    identifier: https://orcid.org/0000-0002-0746-9827
+lifecycle: 
+  status: in_development
+inputs:
+  iso_code:
+    label: admin level 0
+    description: ISO3 country code. Can be consulted in [Codelist of GAUL](https://data.apps.fao.org/catalog/dataset/60b23906-f21a-49ef-8424-f3645e70264e/resource/5ddb9460-d00f-469a-b71f-7629b706701a) 
+    type: text
+    example: "COL"
+  adm1_name:
+    label: admin level 1
+    description: Level 1 name (can be NULL). Can be consulted in [Codelist of GAUL](https://data.apps.fao.org/catalog/dataset/60b23906-f21a-49ef-8424-f3645e70264e/resource/5ddb9460-d00f-469a-b71f-7629b706701a) 
+    type: text
+    example: "Antioquia"
+  adm2_name: 
+    label: admin level 2
+    description: Level 2 name (can be NULL). Can be consulted in [Codelist of GAUL](https://data.apps.fao.org/catalog/dataset/60b23906-f21a-49ef-8424-f3645e70264e/resource/5ddb9460-d00f-469a-b71f-7629b706701a) 
+    type: text
+    example: "Montebello"
+outputs:
+  admin_0:
+    label: admin level 0 (Country)
+    description: Name of country of interest
+    type: text
+  admin_1:
+    label: admin level 1
+    description: Name of state/province level 1
+    type: text
+  admin_2:
+    label: admin level 2
+    description: Name of state/province level 2
+    type: text
+  level_0_polygon:
+    label: Polygon of country
+    description: A GeoPackage file containing the polygon of the chosen country.
+    type: application/geopackage+sqlite3
+  level_1_polygon:
+    label: Polygon of state/province level 1
+    description: A GeoPackage file containing the polygon of the chosen of state/province level 1 of interest
+    type: application/geopackage+sqlite3
+  level_2_polygon:
+    label: Polygon of state/province level 2
+    description: A GeoPackage file containing the polygon of the chosen of state/province level 2 of interest
+    type: application/geopackage+sqlite3
+conda:
+  channels:
+    - conda-forge
+    - r
+  dependencies:
+    - r-rjson
+    - r-geodata
+    - r-ggplot2
+    - r-sf
