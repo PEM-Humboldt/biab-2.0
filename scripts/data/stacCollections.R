@@ -35,14 +35,34 @@ stac_coll <- function(url) {
   do.call(rbind, lapply(meta, as.data.frame))
 }
 
+# create a short slug from the URL host (e.g., stac.geobon.org -> geobon)
+make_url_slug <- function(u) {
+  host <- sub("^https?://([^/]+)/?.*$", "\\1", u)
+  if (identical(host, u)) host <- sub("/.*$", "", u)
+  parts <- strsplit(host, "\\.")[[1]]
+  candidate <- if (length(parts) >= 2) parts[length(parts) - 1] else if (length(parts) == 1) parts[1] else "stac"
+  s <- tolower(gsub("[^a-z0-9]+", "_", candidate))
+  s <- gsub("_+", "_", s)
+  s <- sub("^_+|_+$", "", s)
+  if (nchar(s) == 0) "stac" else s
+}
+
+
+
 # Run
 collections_df <- tryCatch(
   stac_coll(stac_url),
-  error = function(e) biab_error_stop(sprintf("Failed to query STAC: %s", conditionMessage(e)))
+  error = function(e) {
+    biab_error_stop(sprintf(
+      "Failed to query STAC: the URL '%s' is not a STAC server or there is an error in the spelling",
+      stac_url
+    ))
+  }
 )
 
 # Write outputs
-out_csv <- file.path(outputFolder, "collections.csv")
+slug <- make_url_slug(stac_url)
+out_csv <- file.path(outputFolder, sprintf("collections_%s.csv", slug))
 utils::write.csv(collections_df, out_csv, row.names = FALSE)
 
 # Register outputs

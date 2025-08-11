@@ -16,5 +16,5 @@ inputs:
 outputs:
   collections_csv:
     label: Collections (CSV)
-    description: Table of collections with id, title, description, collection_url
+    description: Table of collections with id, title, collection_url
     type: text/csv
