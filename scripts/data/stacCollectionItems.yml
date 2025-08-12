@@ -1,0 +1,30 @@
+script: stacCollectionItems.R
+name: List STAC items
+description: Given a STAC collection URL, filter items by a date range and output a CSV containing a single line with tokens "<collection_id>|<item_id>" separated by commas. 
+author:
+  - name: Luis Fernando Urbina
+    email: lurbina@humboldt.org.co 
+    identifier: https://orcid.org/0000-0002-0746-9827
+lifecycle: 
+  status: in_development
+inputs:
+  collection_url:
+    label: Collection URL
+    description: Full URL to the STAC collection endpoint (e.g., https://stac.geobon.org/collections/colombia-human-footprint)
+    type: text
+    example: "https://stac.geobon.org/collections/colombia-human-footprint"
+  initial_date:
+    label: Initial date
+    description: Start date (inclusive), format YYYY-MM-DD. Optional; leave blank to fetch all items
+    type: text
+    example: "2010-01-01"
+  final_date:
+    label: Final date
+    description: End date (inclusive), format YYYY-MM-DD. Optional; leave blank to fetch all items
+    type: text
+    example: "2020-12-31"
+outputs:
+  items_csv:
+    label: Items CSV
+    description: Single-line CSV with "<collection_id>|<item_id>" comma-separated, no header
+    type: text/csv
