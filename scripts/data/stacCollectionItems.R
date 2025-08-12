@@ -1,13 +1,23 @@
 library(rjson)
 library(rstac)
+library(terra)
 
 # Null-coalescing operator (define if missing)
 if (!exists("%||%", mode = "function")) {
   `%||%` <- function(a, b) if (is.null(a)) b else a
 }
 
-# ---- helpers -------------------------------------------------------------
-# Why: robustly extract base STAC URL and collection id from a collection URL
+#Bon in a Box inputs
+input <- biab_inputs()
+collection_url <- input$collection_url
+initial_date   <- input$initial_date
+final_date     <- input$final_date
+
+if (is.null(collection_url) || nchar(trimws(collection_url)) == 0) {
+  biab_error_stop("Input 'collection_url' is required and must be a non-empty string.")
+}
+
+# Extract base STAC URL and collection id from a collection URL
 parse_collection_url <- function(u) {
   u <- trimws(u)
   if (!grepl("^https?://", u)) biab_error_stop("'collection_url' must start with http:// or https://")
@@ -22,7 +32,7 @@ parse_collection_url <- function(u) {
   list(base = base, id = coll_id)
 }
 
-# Why: build STAC datetime range or return NULL when dates are empty
+# Build STAC datetime range or return NULL when dates are empty
 build_datetime_range <- function(start, end) {
   norm <- function(s) {
     if (is.null(s)) return("")
@@ -39,64 +49,84 @@ build_datetime_range <- function(start, end) {
   paste0(start, "T00:00:00Z/", end, "T23:59:59Z")
 }
 
-# Core: fetch all items and return vector of "collection|item_id"
-fetch_item_tokens <- function(base_url, collection_id, datetime_range) {
-  req <- stac(base_url) |>
-    stac_search(collections = collection_id, datetime = datetime_range, limit = 1000) |>
+# Fetch all items (optionally filtered) and return list of features
+.get_stac <- function(base_url) {
+  # Try autodetect; if it fails, force STAC 1.0.0 (common for servers without landing page hints)
+  out <- tryCatch(stac(base_url), error = function(e) NULL)
+  if (!is.null(out)) return(out)
+  tryCatch(stac(base_url, force_version = "1.0.0"), error = function(e) stop(e))
+}
+
+fetch_items <- function(base_url, collection_id, datetime_range) {
+  s <- .get_stac(base_url)
+  req <- collections(s, collection_id) |>
+    items(limit = 1000, datetime = datetime_range) |>
     get_request() |>
     items_fetch()
+  req$features %||% list()
+}
 
-  feats <- req$features %||% list()
-  if (length(feats) == 0) return(character(0))
-
-  # Defensive: if server ignored `datetime`, filter client-side using properties$datetime
-  if (!is.null(datetime_range)) {
-    rng <- strsplit(datetime_range, "/", fixed = TRUE)[[1]]
-    parse_z <- function(x) as.POSIXct(sub("Z$", "", x), format = "%Y-%m-%dT%H:%M:%OS", tz = "UTC")
-    start_dt <- parse_z(rng[1]); end_dt <- parse_z(rng[2])
-
-    feat_dt <- vapply(feats, function(f) {
-      dt <- tryCatch(f$properties$datetime, error = function(e) NULL)
-      if (is.null(dt)) return(NA_character_)
-      as.character(dt)
-    }, character(1))
-
-    keep <- vapply(feat_dt, function(dt) {
-      if (is.na(dt) || !nzchar(dt)) return(FALSE)
-      ts <- parse_z(dt)
-      !is.na(ts) && ts >= start_dt && ts <= end_dt
-    }, logical(1))
-    feats <- feats[keep]
+# read json bands.spatial_resolution; if not present read GeoTIFF to derive pixel size
+asset_spatial_resolution <- function(asset, verbose_item_id = NULL) {
+  rb <- asset[["raster:bands"]]
+  if (!is.null(rb) && length(rb) >= 1) {
+    sr <- rb[[1]][["spatial_resolution"]]
+    if (!is.null(sr)) return(as.character(sr))
   }
-
-  if (length(feats) == 0) return(character(0))
-  ids <- vapply(feats, function(f) as.character(f$id), character(1))
-  paste(collection_id, ids, sep = "|")
+  href <- asset$href %||% ""
+  if (!nzchar(href)) return(NA_character_)
+  res_str <- tryCatch({
+    r <- terra::rast(href)
+    rr <- terra::res(r)
+    if (length(rr) >= 2) {
+      if (isTRUE(all.equal(rr[1], rr[2]))) as.character(rr[1]) else paste(rr[1], rr[2], sep = ",")
+    } else as.character(rr[1])
+  }, error = function(e) NA_character_)
+  res_str
 }
 
-# ---- BON in a Box I/O ---------------------------------------------------
-input <- biab_inputs()
-collection_url <- input$collection_url
-initial_date   <- input$initial_date
-final_date     <- input$final_date
-
-if (is.null(collection_url) || nchar(trimws(collection_url)) == 0) {
-  biab_error_stop("Input 'collection_url' is required and must be a non-empty string.")
+# Select the FIRST item and its FIRST usable asset
+first_item_and_asset <- function(feats) {
+  if (!length(feats)) return(list(feature = NULL, asset_key = NULL, asset = NULL))
+  # choose the first feature that has at least one asset
+  for (f in feats) {
+    assets <- tryCatch(f$assets, error = function(e) NULL)
+    if (!is.null(assets) && length(assets) > 0) {
+      keys <- names(assets)
+      # preference: asset with raster:bands -> tiff by media_type/href -> first
+      has_rb <- which(vapply(assets, function(a) !is.null(a[["raster:bands"]]), logical(1)))
+      if (length(has_rb)) {
+        k <- keys[has_rb[1]]; return(list(feature = f, asset_key = k, asset = assets[[k]]))
+      }
+      is_tif <- function(a) {
+        mt <- a[["type"]] %||% a[["media_type"]] %||% ""
+        href <- a$href %||% ""
+        grepl("tif(f)?$", tolower(href)) || grepl("tif", tolower(mt))
+      }
+      tif_idx <- which(vapply(assets, is_tif, logical(1)))
+      if (length(tif_idx)) {
+        k <- keys[tif_idx[1]]; return(list(feature = f, asset_key = k, asset = assets[[k]]))
+      }
+      k <- keys[1]; return(list(feature = f, asset_key = k, asset = assets[[k]]))
+    }
+  }
+  list(feature = NULL, asset_key = NULL, asset = NULL)
 }
 
 
+# Parse collection URL and build RFC3339 datetime range (or NULL).
 parsed <- parse_collection_url(collection_url)
 dt_range <- build_datetime_range(initial_date, final_date)
 
 if (is.null(dt_range)) {
-  biab_info(sprintf("Listing all items from collection '%s'", parsed$id))
+  biab_info(sprintf("Processing ALL items from collection '%s'", parsed$id))
 } else {
-  biab_info(sprintf("Listing items from collection '%s' between %s", parsed$id, dt_range))
-} 
+  biab_info(sprintf("Processing items from collection '%s' between %s", parsed$id, dt_range))
+}
 
-# fetch
-tokens <- tryCatch(
-  fetch_item_tokens(parsed$base, parsed$id, dt_range),
+# Fetch items
+feats <- tryCatch(
+  fetch_items(parsed$base, parsed$id, dt_range),
   error = function(e) {
     biab_error_stop(sprintf(
       "Failed to query STAC: the URL '%s' is not a valid STAC collection or is unreachable.",
@@ -105,22 +135,73 @@ tokens <- tryCatch(
   }
 )
 
-# output file name: items_<collection>.csv
+# ---------- Output 1: items_csv ------------------
+# Build tokens "collection|item"
+if (length(feats) == 0) {
+  tokens <- character(0)
+} else {
+  ids <- vapply(feats, function(f) as.character(f$id), character(1))
+  tokens <- paste(parsed$id, ids, sep = "|")
+}
+
+# Filename
 slug <- tolower(gsub("[^a-zA-Z0-9]+", "_", parsed$id))
 slug <- gsub("_+", "_", slug)
 slug <- sub("^_+|_+$", "", slug)
 if (nchar(slug) == 0) slug <- "collection"
 
-out_csv <- file.path(outputFolder, sprintf("items_%s.csv", slug))
+items_csv <- file.path(outputFolder, sprintf("items_%s.csv", slug))
 
-# write: single line, comma-separated, no header
+# Write items line
 if (length(tokens) == 0) {
-  file.create(out_csv)  # create empty file if no items
+  file.create(items_csv)
 } else {
-  con <- file(out_csv, open = "wt", encoding = "UTF-8")
+  con <- file(items_csv, open = "wt", encoding = "UTF-8")
   on.exit(close(con), add = TRUE)
   writeLines(paste(tokens, collapse = ","), con = con, useBytes = TRUE)
 }
+biab_output("items_csv", items_csv)
+biab_info(sprintf("Wrote %d item ids to %s", length(tokens), items_csv))
 
-biab_output("items_csv", out_csv)
-biab_info(sprintf("Wrote %d item ids to %s", length(tokens), out_csv))
+# ---------- Output 2: items_props_csv ----------------
+# Filename for item properties
+props_csv <- file.path(outputFolder, sprintf("items_props_%s.csv", slug))
+
+write_props_lines <- function(path, bbox, epsg, sres, asset_key = NULL) {
+  key_bbox <- "features.properties.proj:bbox"
+  key_epsg <- "features.properties.proj:epsg"
+  key_sres <- if (!is.null(asset_key)) sprintf("features.assets.%s.raster:bands.spatial_resolution", asset_key)
+              else "features.assets.raster:bands.spatial_resolution"
+  lines <- c(
+    sprintf("%s: %s", key_bbox, ifelse(is.na(bbox) | !nzchar(bbox), "NA", bbox)),
+    sprintf("%s: %s", key_epsg, ifelse(is.na(epsg) | !nzchar(as.character(epsg)), "NA", as.character(epsg))),
+    sprintf("%s: %s", key_sres, ifelse(is.na(sres) | !nzchar(as.character(sres)), "NA", as.character(sres)))
+  )
+  con <- file(path, open = "wt", encoding = "UTF-8")
+  on.exit(close(con), add = TRUE)
+  writeLines(lines, con, useBytes = TRUE)
+}
+
+if (length(feats) == 0) {
+  file.create(props_csv)  # no items -> empty file
+  biab_output("items_props_csv", props_csv)
+} else {
+  sel <- first_item_and_asset(feats)
+  if (is.null(sel$feature) || is.null(sel$asset)) {
+    file.create(props_csv)  # no usable asset -> empty file
+    biab_output("items_props_csv", props_csv)
+  } else {
+    f1 <- sel$feature
+    asset_key <- sel$asset_key
+    asset <- sel$asset
+
+    bbox_vals <- f1$properties[["proj:bbox"]]
+    if (is.null(bbox_vals)) bbox_vals <- f1$bbox
+    bbox <- if (is.null(bbox_vals)) NA_character_ else paste(as.numeric(unlist(bbox_vals)), collapse = ",")
+    epsg <- f1$properties[["proj:epsg"]] %||% NA
+    sres <- asset_spatial_resolution(asset, verbose_item_id = f1$id)
+
+    write_props_lines(props_csv, bbox, epsg, sres, asset_key)
+    biab_output("items_props_csv", props_csv)
+  }
+}

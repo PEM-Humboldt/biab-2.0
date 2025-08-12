@@ -1,6 +1,6 @@
 script: stacCollectionItems.R
 name: List STAC items
-description: Given a STAC collection URL, filter items by a date range and output a CSV containing a single line with tokens "<collection_id>|<item_id>" separated by commas. 
+description: Given a STAC collection URL, this step produces two outputs, (1) items_csv — a single-line CSV with tokens "<collection_id>|<item_id>" separated by commas that can be the input of other steps, and (2) items_props_csv — a CSV with the proj:bbox, proj:epsg, and spatial_resolution extracted from the FIRST of the collection. If spatial_resolution is missing in STAC, it reads the GeoTIFF to derive it.
 author:
   - name: Luis Fernando Urbina
     email: lurbina@humboldt.org.co 
@@ -10,7 +10,7 @@ lifecycle:
 inputs:
   collection_url:
     label: Collection URL
-    description: Full URL to the STAC collection endpoint (e.g., https://stac.geobon.org/collections/colombia-human-footprint)
+    description: Full URL to the STAC collection endpoint
     type: text
     example: "https://stac.geobon.org/collections/colombia-human-footprint"
   initial_date:
@@ -27,4 +27,8 @@ outputs:
   items_csv:
     label: Items CSV
     description: Single-line CSV with "<collection_id>|<item_id>" comma-separated, no header
+    type: text/csv
+  items_props_csv:
+    label: Item properties CSV
+    description: CSV file where each line contains a property in the form "key:value" (no header). The keys are proj:bbox, proj:epsg, and spatial_resolution from the first item in the collection.
     type: text/csv
