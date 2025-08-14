@@ -27,7 +27,7 @@ outputs:
   items_csv:
     label: Items CSV
     description: Single-line CSV with "<collection_id>|<item_id>" comma-separated, no header
-    type: text/csv
+    type: text[]
   items_props_csv:
     label: Item properties CSV
     description: CSV file where each line contains a property in the form "key:value" (no header). The keys are proj:bbox, proj:epsg, and spatial_resolution from the first item in the collection.

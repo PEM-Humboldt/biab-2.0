@@ -1,0 +1,592 @@
+{
+  "nodes": [
+    {
+      "id": "29",
+      "type": "io",
+      "position": {
+        "x": 168.20915719507093,
+        "y": 685.8275549518451
+      },
+      "data": {
+        "descriptionFile": "data>loadGeoboundaries.yml"
+      }
+    },
+    {
+      "id": "30",
+      "type": "io",
+      "position": {
+        "x": 215.14232734129996,
+        "y": 285.2663060843692
+      },
+      "data": {
+        "descriptionFile": "data>stacCollectionItems.yml"
+      }
+    },
+    {
+      "id": "31",
+      "type": "io",
+      "position": {
+        "x": 898.3806976211195,
+        "y": 150.37525085431565
+      },
+      "data": {
+        "descriptionFile": "data>loadFromStac.yml"
+      }
+    },
+    {
+      "id": "32",
+      "type": "constant",
+      "position": {
+        "x": -316.3050435622966,
+        "y": 601.3730770391361
+      },
+      "dragHandle": ".dragHandle",
+      "data": {
+        "type": "text",
+        "value": "COL"
+      }
+    },
+    {
+      "id": "33",
+      "type": "constant",
+      "position": {
+        "x": -323.1972336662446,
+        "y": 676.0384698319058
+      },
+      "dragHandle": ".dragHandle",
+      "data": {
+        "type": "text",
+        "value": "Antioquia"
+      }
+    },
+    {
+      "id": "34",
+      "type": "constant",
+      "position": {
+        "x": -356.5436147379683,
+        "y": 737.2100732000466
+      },
+      "dragHandle": ".dragHandle",
+      "data": {
+        "type": "text",
+        "value": "Montebello"
+      }
+    },
+    {
+      "id": "35",
+      "type": "constant",
+      "position": {
+        "x": -290.5682196977482,
+        "y": 213.45498369090012
+      },
+      "dragHandle": ".dragHandle",
+      "data": {
+        "type": "text",
+        "value": "http://172.191.168.255:8082/collections/forestNonForestColombia"
+      }
+    },
+    {
+      "id": "36",
+      "type": "constant",
+      "position": {
+        "x": -265.2968559832723,
+        "y": 295.01256658761787
+      },
+      "dragHandle": ".dragHandle",
+      "data": {
+        "type": "text",
+        "value": null
+      }
+    },
+    {
+      "id": "37",
+      "type": "constant",
+      "position": {
+        "x": -276.7838394898522,
+        "y": 374.27275278301965
+      },
+      "dragHandle": ".dragHandle",
+      "data": {
+        "type": "text",
+        "value": null
+      }
+    },
+    {
+      "id": "38",
+      "type": "userInput",
+      "position": {
+        "x": 461.61268312685,
+        "y": 83.82447349103768
+      },
+      "dragHandle": ".dragHandle",
+      "data": {
+        "type": "text",
+        "value": "http://172.191.168.255:8082/"
+      }
+    },
+    {
+      "id": "39",
+      "type": "userInput",
+      "position": {
+        "x": 419.388430301109,
+        "y": 155.07790013447533
+      },
+      "dragHandle": ".dragHandle",
+      "data": {
+        "type": "float[]",
+        "value": []
+      }
+    },
+    {
+      "id": "40",
+      "type": "userInput",
+      "position": {
+        "x": 276.8815770142338,
+        "y": 374.11621166800586
+      },
+      "dragHandle": ".dragHandle",
+      "data": {
+        "type": "text",
+        "value": "EPSG:6622"
+      }
+    },
+    {
+      "id": "41",
+      "type": "userInput",
+      "position": {
+        "x": 337.57894045123635,
+        "y": 418.97948029535564
+      },
+      "dragHandle": ".dragHandle",
+      "data": {
+        "type": "float",
+        "value": 1000
+      }
+    },
+    {
+      "id": "42",
+      "type": "userInput",
+      "position": {
+        "x": 290.6741956396204,
+        "y": 483.9425734978356
+      },
+      "dragHandle": ".dragHandle",
+      "data": {
+        "type": "options",
+        "value": "near",
+        "options": [
+          "near",
+          "bilinear",
+          "average",
+          "mode",
+          "cubic",
+          "cubicspline",
+          "lanczos",
+          "rms",
+          "min",
+          "max",
+          "sum",
+          "med",
+          "q1",
+          "q3"
+        ]
+      }
+    },
+    {
+      "id": "43",
+      "type": "constant",
+      "position": {
+        "x": 276.9645294583132,
+        "y": 557.2037313079671
+      },
+      "dragHandle": ".dragHandle",
+      "data": {
+        "type": "options",
+        "value": "first",
+        "options": [
+          "first",
+          "min",
+          "max",
+          "mean",
+          "median"
+        ]
+      }
+    },
+    {
+      "id": "44",
+      "type": "io",
+      "position": {
+        "x": 1617.8320105183393,
+        "y": 280.91656380204495
+      },
+      "data": {
+        "descriptionFile": "zonal_statistics>zonal_stats.yml"
+      }
+    },
+    {
+      "id": "45",
+      "type": "userInput",
+      "position": {
+        "x": 1021.7070097453227,
+        "y": 337.5183508460102
+      },
+      "dragHandle": ".dragHandle",
+      "data": {
+        "type": "float[]",
+        "value": []
+      }
+    },
+    {
+      "id": "46",
+      "type": "userInput",
+      "position": {
+        "x": 1119.7626136089948,
+        "y": 636.3254685381092
+      },
+      "dragHandle": ".dragHandle",
+      "data": {
+        "type": "text",
+        "value": "EPSG:4326"
+      }
+    },
+    {
+      "id": "47",
+      "type": "constant",
+      "position": {
+        "x": 1259.9149631135128,
+        "y": 721.1467895795633
+      },
+      "dragHandle": ".dragHandle",
+      "data": {
+        "type": "options[]",
+        "value": [
+          "sum"
+        ],
+        "options": [
+          "mean",
+          "median",
+          "sum",
+          "min",
+          "max",
+          "stdev",
+          "variance",
+          "mode"
+        ]
+      }
+    },
+    {
+      "id": "48",
+      "type": "output",
+      "position": {
+        "x": 2278.6228683602094,
+        "y": 366.19916426317934
+      },
+      "data": {
+        "label": "Output"
+      }
+    },
+    {
+      "id": "50",
+      "type": "output",
+      "position": {
+        "x": 803.4419250488281,
+        "y": 445.2425537109375
+      },
+      "data": {
+        "label": "Output"
+      }
+    },
+    {
+      "id": "51",
+      "type": "output",
+      "position": {
+        "x": 815.4419250488281,
+        "y": 392.2425537109375
+      },
+      "data": {
+        "label": "Output"
+      }
+    },
+    {
+      "id": "53",
+      "type": "userInput",
+      "position": {
+        "x": 568.4419250488281,
+        "y": 190.2425537109375
+      },
+      "dragHandle": ".dragHandle",
+      "data": {
+        "type": "text[]",
+        "value": [
+          "chelsa-clim|bio1",
+          "chelsa-clim|bio2"
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "32",
+      "sourceHandle": null,
+      "target": "29",
+      "targetHandle": "iso_code",
+      "id": "reactflow__edge-32-29iso_code"
+    },
+    {
+      "source": "33",
+      "sourceHandle": null,
+      "target": "29",
+      "targetHandle": "adm1_name",
+      "id": "reactflow__edge-33-29adm1_name"
+    },
+    {
+      "source": "34",
+      "sourceHandle": null,
+      "target": "29",
+      "targetHandle": "adm2_name",
+      "id": "reactflow__edge-34-29adm2_name"
+    },
+    {
+      "source": "29",
+      "sourceHandle": "level_1_polygon",
+      "target": "31",
+      "targetHandle": "study_area",
+      "id": "reactflow__edge-29level_1_polygon-31study_area"
+    },
+    {
+      "source": "35",
+      "sourceHandle": null,
+      "target": "30",
+      "targetHandle": "collection_url",
+      "id": "reactflow__edge-35-30collection_url"
+    },
+    {
+      "source": "36",
+      "sourceHandle": null,
+      "target": "30",
+      "targetHandle": "initial_date",
+      "id": "reactflow__edge-36-30initial_date"
+    },
+    {
+      "source": "37",
+      "sourceHandle": null,
+      "target": "30",
+      "targetHandle": "final_date",
+      "id": "reactflow__edge-37-30final_date"
+    },
+    {
+      "source": "38",
+      "sourceHandle": null,
+      "target": "31",
+      "targetHandle": "stac_url",
+      "id": "reactflow__edge-38-31stac_url"
+    },
+    {
+      "source": "39",
+      "sourceHandle": null,
+      "target": "31",
+      "targetHandle": "bbox",
+      "id": "reactflow__edge-39-31bbox"
+    },
+    {
+      "source": "40",
+      "sourceHandle": null,
+      "target": "31",
+      "targetHandle": "crs",
+      "id": "reactflow__edge-40-31crs"
+    },
+    {
+      "source": "41",
+      "sourceHandle": null,
+      "target": "31",
+      "targetHandle": "spatial_res",
+      "id": "reactflow__edge-41-31spatial_res"
+    },
+    {
+      "source": "42",
+      "sourceHandle": null,
+      "target": "31",
+      "targetHandle": "resampling",
+      "id": "reactflow__edge-42-31resampling"
+    },
+    {
+      "source": "43",
+      "sourceHandle": null,
+      "target": "31",
+      "targetHandle": "aggregation",
+      "id": "reactflow__edge-43-31aggregation"
+    },
+    {
+      "source": "31",
+      "sourceHandle": "rasters",
+      "target": "44",
+      "targetHandle": "rasters",
+      "id": "reactflow__edge-31rasters-44rasters"
+    },
+    {
+      "source": "45",
+      "sourceHandle": null,
+      "target": "44",
+      "targetHandle": "bbox",
+      "id": "reactflow__edge-45-44bbox"
+    },
+    {
+      "source": "46",
+      "sourceHandle": null,
+      "target": "44",
+      "targetHandle": "crs",
+      "id": "reactflow__edge-46-44crs"
+    },
+    {
+      "source": "47",
+      "sourceHandle": null,
+      "target": "44",
+      "targetHandle": "summary_statistic",
+      "id": "reactflow__edge-47-44summary_statistic"
+    },
+    {
+      "source": "44",
+      "sourceHandle": "zonal_stats",
+      "target": "48",
+      "targetHandle": null,
+      "id": "reactflow__edge-44zonal_stats-48"
+    },
+    {
+      "source": "29",
+      "sourceHandle": "level_1_polygon",
+      "target": "44",
+      "targetHandle": "study_area_polygon",
+      "id": "reactflow__edge-29level_1_polygon-44study_area_polygon"
+    },
+    {
+      "source": "30",
+      "sourceHandle": "items_props_csv",
+      "target": "50",
+      "targetHandle": null,
+      "id": "reactflow__edge-30items_props_csv-50"
+    },
+    {
+      "source": "30",
+      "sourceHandle": "items_csv",
+      "target": "51",
+      "targetHandle": null,
+      "id": "reactflow__edge-30items_csv-51"
+    },
+    {
+      "source": "53",
+      "sourceHandle": null,
+      "target": "31",
+      "targetHandle": "collections_items",
+      "id": "reactflow__edge-53-31collections_items"
+    }
+  ],
+  "inputs": {
+    "data>loadFromStac.yml@31|weight_matrix_with_ids": {
+      "description": "Weight matrix used for BON optimization. Vector of strings, collection name followed by '|' followed by item id, followed by weights. If using the GEO BON Stac catalog, see the list of [available layers here](https://stac.geobon.org/viewer). The collection and item ids can be obtained as the last two parts of the url for each layer (chelsa-clim/bio1). Cannot be used if collection_items is set.",
+      "label": "Weight matrix with ids",
+      "type": "text",
+      "example": null,
+      "weight": 0
+    },
+    "pipeline@38": {
+      "label": "STAC URL",
+      "description": "URL of the STAC catalog.",
+      "type": "text",
+      "example": "https://stac.geobon.org/",
+      "weight": 1
+    },
+    "pipeline@39": {
+      "label": "Bounding box",
+      "description": "Vector of float, bbox coordinates of the extent in the order xmin, ymin, xmax, ymax.must be consistent with the coordinate reference system (e.g., if using EPSG:4326, the bbox shoul be in  degrees and id using ESPG:6622 the bbox should be in meters)",
+      "type": "float[]",
+      "example": [
+        -2316297,
+        -1971146,
+        1015207,
+        1511916
+      ],
+      "weight": 2
+    },
+    "pipeline@40": {
+      "label": "Coordinate reference system",
+      "description": "Numerical value referring to the EPSG code (European Petroleum Survey Group) associated with the spatial reference system that will be used as a reference for the study area.\nThis numerical value specifies the projection and geodetic datum used to define the coordinates and spatial representation of the data in the study area.\nThis MUST be in a projected reference system (not lat long).\n\nFor further information on coordinate systems and EPSG codes, you can access the official database on the EPSG website at [https://epsg.org/home.html](https://epsg.org/home.html).\nThe website provides documentation, resources, and tools for searching and understanding the EPSG codes used in various geospatial contexts.\n\n*Leave blank if you want the bounding box to be in EPSG:4326.*\n",
+      "type": "text",
+      "example": "EPSG:6622",
+      "weight": 3
+    },
+    "pipeline@41": {
+      "label": "Spatial resolution",
+      "description": "Integer, spatial resolution of the rasters in meters (e.g., 1000 for 1km resolution) or degrees (e.g. 0.0083 for 1km resolution) This is the resolution at which the rasters will be resampled. Must be consistent with the coordinate reference system (e.g., if using EPSG:4326, the resolution should be in degrees and id using ESPG:6622 the resolution should be in meters).",
+      "type": "float",
+      "example": 1000,
+      "weight": 4
+    },
+    "pipeline@42": {
+      "label": "Resampling method",
+      "description": "Resampling method used when rescaling the raster layers. See [gdalwarp](https://gdal.org/en/latest/programs/gdalwarp.html) for description.",
+      "type": "options",
+      "example": "near",
+      "options": [
+        "near",
+        "bilinear",
+        "average",
+        "mode",
+        "cubic",
+        "cubicspline",
+        "lanczos",
+        "rms",
+        "min",
+        "max",
+        "sum",
+        "med",
+        "q1",
+        "q3"
+      ],
+      "weight": 5
+    },
+    "pipeline@45": {
+      "label": "Bounding box",
+      "description": "Vector of float, bbox coordinates of the extent in the order xmin, ymin, xmax, ymax.\nBounding box must be in the specified coordinate reference system. Leave bank if uploading a study area.\n",
+      "type": "float[]",
+      "example": [],
+      "weight": 6
+    },
+    "pipeline@46": {
+      "label": "Coordinate reference system",
+      "description": "Numerical value referring to the EPSG code (European Petroleum Survey Group) associated with the spatial reference system that will be used as a reference for the study area.\nThis numerical value specifies the projection and geodetic datum used to define the coordinates and spatial representation of the data in the study area.\nThis MUST be in a projected reference system (not lat long).\n\nFor further information on coordinate systems and EPSG codes, you can access the official database on the EPSG website at [https://epsg.org/home.html](https://epsg.org/home.html).\nThe website provides documentation, resources, and tools for searching and understanding the EPSG codes used in various geospatial contexts.\n",
+      "type": "text",
+      "example": "EPSG:4326",
+      "weight": 7
+    },
+    "pipeline@53": {
+      "label": "STAC collection items",
+      "description": "Vector of strings, collection name followed by '|' followed by item id",
+      "type": "text[]",
+      "example": [
+        "chelsa-clim|bio1",
+        "chelsa-clim|bio2"
+      ],
+      "weight": 8
+    }
+  },
+  "outputs": {
+    "zonal_statistics>zonal_stats.yml@44|zonal_stats": {
+      "description": "Summary statistic over the polygon",
+      "label": "Summary statistic",
+      "type": "text/csv",
+      "weight": 0
+    },
+    "data>stacCollectionItems.yml@30|items_props_csv": {
+      "description": "CSV file where each line contains a property in the form \"key:value\" (no header). The keys are proj:bbox, proj:epsg, and spatial_resolution from the first item in the collection.",
+      "label": "Item properties CSV",
+      "type": "text/csv",
+      "weight": 1
+    },
+    "data>stacCollectionItems.yml@30|items_csv": {
+      "description": "Single-line CSV with \"<collection_id>|<item_id>\" comma-separated, no header",
+      "label": "Items CSV",
+      "type": "text/csv",
+      "weight": 2
+    }
+  }
+}

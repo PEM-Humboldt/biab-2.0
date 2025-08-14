@@ -1,6 +1,6 @@
 script: loadFromStac.R
 name: Load from STAC
-description: "Extract individual unprocessed items from various collections on the GEO BON STAC catalog."
+description: "Extract individual unprocessed items from collections from STAC catalogs."
 author:
   - name: Guillaume Larocque
     identifier: https://orcid.org/0000-0002-5967-9156
@@ -13,7 +13,7 @@ inputs:
     example: https://stac.geobon.org/
   bbox:
     label: Bounding box
-    description: Vector of float, bbox coordinates of the extent in the order xmin, ymin, xmax, ymax
+    description: Vector of float, bbox coordinates of the extent in the order xmin, ymin, xmax, ymax.must be consistent with the coordinate reference system (e.g., if using EPSG:4326, the bbox shoul be in  degrees and id using ESPG:6622 the bbox should be in meters)
     type: float[]
     example: [-2316297, -1971146, 1015207, 1511916]
   collections_items:
@@ -41,7 +41,7 @@ inputs:
     example: "EPSG:6622"
   spatial_res:
     label: Spatial resolution
-    description: Integer, spatial resolution of the rasters in meters
+    description: Integer, spatial resolution of the rasters in meters (e.g., 1000 for 1km resolution) or degrees (e.g. 0.0083 for 1km resolution) This is the resolution at which the rasters will be resampled. Must be consistent with the coordinate reference system (e.g., if using EPSG:4326, the resolution should be in degrees and id using ESPG:6622 the resolution should be in meters).
     type: float
     example: 1000.0
   resampling:
@@ -79,7 +79,7 @@ inputs:
     label: Study area
     description: Polygon of study area used to crop output layers
     type: application/geopackage+sqlite3
-    example: null
+    example: ".gpkg"
 outputs:
   rasters:
     label: Rasters
